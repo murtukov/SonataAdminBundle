@@ -25,9 +25,8 @@ Check out the documentation on the [official website](https://sonata-project.org
 	<code><b>service</b>(string $id): object|null</code>
 </font> 
 
-<font size="2">
-	<code><b>service</b>(string $id): object|null</code>
-</font> 
+## <code><b>service</b>(string $id): object|null</code>
+
 
 For general support and questions, please use [StackOverflow](http://stackoverflow.com/questions/tagged/sonata).
 
