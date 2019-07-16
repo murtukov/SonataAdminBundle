@@ -44,3 +44,16 @@ This package is available under the [MIT license](LICENSE).
 [scrutinizer_stable_link]: https://scrutinizer-ci.com/g/sonata-project/SonataAdminBundle/?branch=3.x
 [scrutinizer_unstable_badge]: https://scrutinizer-ci.com/g/sonata-project/SonataAdminBundle/badges/quality-score.png?b=master
 [scrutinizer_unstable_link]: https://scrutinizer-ci.com/g/sonata-project/SonataAdminBundle/?branch=master
+
+
+### <code>service(string $id): object|null</code>
+Gets a service from the [service container](#https://symfony.com/doc/current/service_container.html).  
+Example: `@=service('my_service').customMethod()`
+
+### <code>parameter(string $name): mixed</code>
+Gets a parameter from the [service container](#https://symfony.com/doc/current/service_container.html).
+**example**: `@=parameter('kernel.debug')`
+
+### <code>isTypeOf(string $className): boolean</code>
+Verifies if `value` is instance of the `$className`
+**example**: `@=isTypeOf('AppBundle\\User\\User')`
