@@ -120,3 +120,9 @@ Calls a method on the tagged service `overblog_graphql.mutation` passing `$args`
 </table>
 
 ---
+
+|||
+|-|-|
+| Signature | <code><b>isTypeOf</b>(string <b>$className</b>): boolean</code>|
+|Alias|res
+| Example | `@=isTypeOf('App\\User\\User')`
