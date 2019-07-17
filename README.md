@@ -46,24 +46,26 @@ This package is available under the [MIT license](LICENSE).
 [scrutinizer_unstable_link]: https://scrutinizer-ci.com/g/sonata-project/SonataAdminBundle/?branch=master
 
 
-### <code>service(string $id): object|null</code>  
-&emsp;&emsp;Gets a service from the [service container](#https://symfony.com/doc/current/service_container.html).  
-  
-&emsp;&emsp;**alias**: `ser`  
-&emsp;&emsp;**example**: `@=service('my_service').customMethod()`  
-  
-### <code>parameter(string $name): mixed</code>  
-&emsp;&emsp;Gets a parameter from the [service container](#https://symfony.com/doc/current/service_container.html).  
+Gets a parameter from the [service container](https://symfony.com/doc/current/service_container.html). 
 
-&emsp;&emsp;**alias**: `param` 
-&emsp;&emsp;**example**: `@=parameter('kernel.debug')`  
-  
-### <code>isTypeOf(string $className): boolean</code>  
-&emsp;&emsp;Verifies if `value` is instance of the `$className`  
-
-&emsp;&emsp;**example**: `@=isTypeOf('AppBundle\\User\\User')`
-
-### <code>resolver(string $alias, array $args = []): mixed</code>  
-&emsp;&emsp;Calls a method on the tagged service “overblog_graphql.resolver” with `$args`
-
-&emsp;&emsp;**example**: `@=resolver('blog_by_id', [value['blogID']])`
+<table>
+    <tbody>
+        <tr>
+            <td>Signature</td>
+            <td><code><b>parameter</b>(string <b>$name</b>): mixed</code></td>
+        </tr>
+        <tr>
+            <td>Alias</td>
+            <td>param</td>
+        </tr>
+        <tr>
+            <td>Examples</td>
+            <td>
+	            <ul>
+	            <li><code>@=parameter('kernel.debug')
+	            <li><code>@=parameter('kernel.debug')
+	            </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
