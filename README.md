@@ -34,6 +34,10 @@ Checks if `value` is instance of the `$className`
 Examples: 
  - `@=isTypeOf('App\\User\\User')`
 
+| Description | Signature |Examples |
+|-------------|----------|---------|
+|Checks if `value` is instance of the `$className` | code>isTypeOf(string $className): boolean</code> |`@=isTypeOf('App\\User\\User')` |
+
 ---
 
 ### <code>resolver(string $alias, array $args = []): mixed</code>  
