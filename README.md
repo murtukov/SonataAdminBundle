@@ -61,10 +61,10 @@ Gets a parameter from the [service container](https://symfony.com/doc/current/se
         <tr>
             <td>Examples</td>
             <td>
-	            <ul>
-	            <li><code>@=parameter('kernel.debug')
-	            <li><code>@=parameter('kernel.debug')
-	            </ul>
+                <ul>
+                        <li><code>@=parameter('kernel.debug')</code></li>
+                        <li><code>@=parameter('kernel.debug')</code></li>
+                </ul>
             </td>
         </tr>
     </tbody>
