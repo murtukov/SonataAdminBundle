@@ -24,11 +24,7 @@ Gets a service from the [service container](https://symfony.com/doc/current/serv
     </tbody>
 </table>
 
----
-
 ### `parameter`
-
-
 Gets a parameter from the [service container](https://symfony.com/doc/current/service_container.html). 
 
 <table>
@@ -53,8 +49,6 @@ Gets a parameter from the [service container](https://symfony.com/doc/current/se
     </tbody>
 </table>
 
----
-  
 ### `isTypeOf`
 Checks if `value` is instance of the `$className`  
 
@@ -74,8 +68,6 @@ Checks if `value` is instance of the `$className`
         </tr>
     </tbody>
 </table>
-
----
 
 ### `resolver`
 Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
@@ -101,8 +93,6 @@ Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
         </tr>
     </tbody>
 </table>
-
----
 
 ### `mutation`
 Calls a method on the tagged service `overblog_graphql.mutation` passing `$args` as arguments.
