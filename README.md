@@ -74,3 +74,59 @@ Checks if `value` is instance of the `$className`
         </tr>
     </tbody>
 </table>
+
+---
+
+### `resolver`
+Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
+
+<table>
+    <tbody>
+        <tr>
+            <td>Signature</td>
+            <td><code><b>resolver</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code></td>
+        </tr>
+        <tr>
+            <td>Alias</td>
+            <td>res</td>
+        </tr>
+        <tr>
+            <td>Examples</td>
+            <td>
+	            <ul>
+		            <li><code>@=resolver('blog_by_id', [value['blogID']])</code></li>
+		            <li><code>@=res('blog_by_id', [value['blogID']])</code></li>
+	            </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+---
+
+### `mutation`
+Calls a method on the tagged service `overblog_graphql.mutation` passing `$args` as arguments.
+
+<table>
+    <tbody>
+        <tr>
+            <td>Signature</td>
+            <td><code><b>mutation</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code></td>
+        </tr>
+        <tr>
+            <td>Alias</td>
+            <td><code>mut</code></td>
+        </tr>
+        <tr>
+            <td>Examples</td>
+            <td>
+	            <ul>
+		            <li><code>@=mutation(‘remove_post_from_community’, [value])</code></li>
+		            <li><code>@=mut(‘remove_post_from_community’, [value])</code></li>
+	            </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+---
