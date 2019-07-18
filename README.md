@@ -1,10 +1,10 @@
 ### `service `
-Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
-
 **Alias**: `ser`
 **Signature**: service(string $id): object|null
 
-##### Examples:
+Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
+
+**Examples**:
 ```yaml
 @=service('my_service').customMethod()
 # or
