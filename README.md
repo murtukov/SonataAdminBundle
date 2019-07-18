@@ -1,7 +1,5 @@
 ### `service `
 <code><b>service</b>(string <b>$id</b>): object|null</code>
-or
-<code><b>ser</b>(string <b>$id</b>): object|null</code>
 **Alias**: `ser`
 
 Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
