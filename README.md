@@ -7,8 +7,9 @@ Gets a service from the [service container](https://symfony.com/doc/current/serv
 ##### Alias: `ser`
 
 ##### Examples:
-```
+```yaml
 @=service('my_service').customMethod()
+# or
 @=service('App\\Manager\\UserManager').customMethod()
 ```
 
