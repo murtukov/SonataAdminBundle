@@ -1,8 +1,8 @@
 ### `service `
-Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
 ```php
 service(string $id): object|null
 ```
+Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
 
 ##### Alias: `ser`
 
