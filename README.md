@@ -1,10 +1,8 @@
 ### `service `
-```php
-service(string $id): object|null
-```
 Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
 
-##### Alias: `ser`
+**Alias**: `ser`
+**Signature**: service(string $id): object|null
 
 ##### Examples:
 ```yaml
