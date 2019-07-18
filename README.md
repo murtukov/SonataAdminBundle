@@ -1,16 +1,16 @@
 ### `service `
 Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
-
-
-
-##### Signature: <code><b>service</b>(string <b>$id</b>): object|null</code>
+```php
+service(string $id): object|null
+```
 
 ##### Alias: `ser`
 
 ##### Examples:
- - <code>@=service('my_service').customMethod()</code>
- - <code>@=service('App\\Manager\\UserManager').customMethod()</code>
-
+```
+@=service('my_service').customMethod()
+@=service('App\\Manager\\UserManager').customMethod()
+```
 
 ### `parameter`
 Gets a parameter from the [service container](https://symfony.com/doc/current/service_container.html). 
