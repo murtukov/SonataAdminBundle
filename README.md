@@ -2,27 +2,15 @@
 Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
 
 
-<table>
-    <tbody>
-        <tr>
-            <td>Signature</td>
-            <td><code><b>service</b>(string <b>$id</b>): object|null</code></td>
-        </tr>
-        <tr>
-            <td>Alias</td>
-            <td>ser</td>
-        </tr>
-        <tr>
-            <td>Examples</td>
-            <td>
-	            <ul>
-	            <li><code>@=service('my_service').customMethod()</code></li>
-	            <li><code>@=service('App\\Manager\\UserManager').customMethod()</code></li>
-	            </ul>
-            </td>
-        </tr>
-    </tbody>
-</table>
+
+Signature: <code><b>service</b>(string <b>$id</b>): object|null</code>
+
+Alias: `ser`
+
+Examples:
+ - <code>@=service('my_service').customMethod()</code>
+ - <code>@=service('App\\Manager\\UserManager').customMethod()</code>
+
 
 ### `parameter`
 Gets a parameter from the [service container](https://symfony.com/doc/current/service_container.html). 
