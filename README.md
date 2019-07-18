@@ -1,4 +1,4 @@
-### `service `
+### service
 **Signature**: <code><b>service</b>(string <b>$id</b>): object|null</code>
 **Alias**: `ser`
 
@@ -11,7 +11,7 @@ Examples:
 @=service('App\\Manager\\UserManager').customMethod()
 ```
 
-### `parameter`
+### parameter
 <code><b>parameter</b>(string <b>$name</b>): mixed</code>
 **Alias**: `param`
 
