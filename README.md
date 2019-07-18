@@ -11,6 +11,8 @@ Examples:
 @=service('App\\Manager\\UserManager').customMethod()
 ```
 
+---
+
 ### parameter
 <code><b>parameter</b>(string <b>$name</b>): mixed</code>
 **Alias**: `param`
