@@ -4,7 +4,7 @@ Alias: `ser`
 
 Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). 
 
-**Examples**:
+Examples:
 ```yaml
 @=service('my_service').customMethod()
 # or
