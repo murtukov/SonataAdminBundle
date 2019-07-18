@@ -12,29 +12,18 @@ Examples:
 ```
 
 ### `parameter`
+<code><b>parameter</b>(string <b>$name</b>): mixed</code>
+**Alias**: `param`
+
 Gets a parameter from the [service container](https://symfony.com/doc/current/service_container.html). 
 
-<table>
-    <tbody>
-        <tr>
-            <td>Signature</td>
-            <td><code><b>parameter</b>(string <b>$name</b>): mixed</code></td>
-        </tr>
-        <tr>
-            <td>Alias</td>
-            <td>param</td>
-        </tr>
-        <tr>
-            <td>Examples</td>
-            <td>
-	            <ul>
-	            <li><code>@=parameter('kernel.debug')</code></li>
-	            <li><code>@=parameter('kernel.debug')</code></li>
-	            </ul>
-            </td>
-        </tr>
-    </tbody>
-</table>
+Examples:
+```yaml
+@=parameter('kernel.debug')
+# or using alias
+@=param('kernel.debug')
+```
+
 
 ### `isTypeOf`
 Checks if `value` is instance of the `$className`  
