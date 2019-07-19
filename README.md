@@ -1,27 +1,27 @@
 # Validation
 
-This bundle provides a tight integration with the Validation Component of the Symfony to validate the user input data.
+This bundle provides a tight integration with the Symfony Validation Component to validate user input data.
 
 ###  Contents:
 - [Overview](#overview)
 - [How does it work?](#how-does-it-work)
 - [Applying validation constraints](#applying-validation-constraints)
-	- [Listing constraints explicitly](#listing-constraints-explicitly)
-		- [object](#object)
-		- [input-object](#input-object)
-	- [Linking class constraints](#linking-class-constraints)
-		- [Context of linked constraints](#context-of-linked-constraints)
-		- [Validation groups of linked constraints](#validation-groups-of-linked-constraints)
-	- [Cascade](#cascade)
+    - [Listing constraints explicitly](#listing-constraints-explicitly)
+        - [object](#object)
+        - [input-object](#input-object)
+    - [Linking class constraints](#linking-class-constraints)
+        - [Context of linked constraints](#context-of-linked-constraints)
+        - [Validation groups of linked constraints](#validation-groups-of-linked-constraints)
+    - [Cascade](#cascade)
 - [Groups](#groups)
-	- [Group Sequences](#group-sequences)
+    - [Group Sequences](#group-sequences)
 - [Customize error messages](#customize-error-messages)
 - [Translations](#translations)
 - [Using build in expression functions](#using-built-in-expression-functions)
 - [ValidationNode API](#validationnode-api)
 - [Limitations](#limitations)
-	- [Annotations and GraphQL Schema language](#annotations-and-graphql-schema-language)
-	- [Unsupported constraints](#unsupported-constraints)
+    - [Annotations and GraphQL Schema language](#annotations-and-graphql-schema-language)
+    - [Unsupported constraints](#unsupported-constraints)
 
 
 ## Overview
@@ -62,47 +62,44 @@ Mutation:
                             - All:
                                 - Email: ~
                     birthdate:
-	                    type: Birthdate
-	                    validation: cascade
-	                    
+                        type: Birthdate
+                        validation: cascade
+                        
 Birthday:
-	type: input-object
-	config:
-		fields:
-			day:
-				type: Int!
-				validation:
-					- Range: { min: 1, max: 31 }
-			month:
-				type: Int!
-				validation:
-					- Range: { min: 1, max: 12 }
-			year:
-				type: Int!	
-				validation:
-					- Range: { min: 1900, max: today }
+    type: input-object
+    config:
+        fields:
+            day:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 31 }
+            month:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 12 }
+            year:
+                type: Int!	
+                validation:
+                    - Range: { min: 1900, max: today }
 ```
 The configuration above ensures, that:
 - **username** 
-		- has length between 6 and 32
+    - has length between 6 and 32
 - **password** 
-		- has length between 8 and 32
-		- is equal to the *passwordRepeat* value
+    - has length between 8 and 32
+    - is equal to the *passwordRepeat* value
 - **email**
-	    - every item in the collection is unique
-	    - the number of items in the collection is between 1 and 3
-	    - every item in the collection is a valid email address
+    - every item in the collection is unique
+    - the number of items in the collection is between 1 and 3
+    - every item in the collection is a valid email address
 
 The `birthday` field is of type `input-object` and marked as `cascade` so it's validation will happen according to the  constraints declared in the `Birthday` type:
-- **day** 
-		- is between 1 and 31
-- **month** 
-		- is between 1 and 12
-- **year**
-	    - is between 1900 and today
+- **day** is between 1 and 31
+- **month** is between 1 and 12
+- **year** is between 1900 and today
 
 
-A configured `validator` will be then injected into the resolver, which was defined in the `Mutation.yaml`:
+A configured `validator` will be then injected into the resolver defined in the `Mutation.yaml`:
 ```php
 namespace App\GraphQL\Mutation\Mutation
 
@@ -113,28 +110,28 @@ use Overblog\GraphQLBundle\Validator\ArgumentsValidator;
 
 class UserResolver implements MutationInterface, AliasedInterface
 {
-	public function register(Argument $args, ArgumentsValidator $validator): User
-	{
-		// This line executes a validation process and throws MutationValidationException 
-		// on fail. The client will then get a well formatted error message.
-	    $validator->validate();
-	    
-	    // This line wont be reached if the validation fails
-		$user = $this->userManager->createUser($args);
-		$this->userManager->save($user);
-		
-		return $user;
-	}
+    public function register(Argument $args, ArgumentsValidator $validator): User
+    {
+        // This line executes a validation process and throws MutationValidationException 
+        // on fail. The client will then get a well formatted error message.
+        $validator->validate();
+        
+        // This line wont be reached if the validation fails
+        $user = $this->userManager->createUser($args);
+        $this->userManager->save($user);
+        
+        return $user;
+    }
 
     public static function getAliases(): array
     {
-	    return ['register' => 'register'];
+        return ['register' => 'register'];
     }	
 }
 ```
 ## How does it work?
 
-The Symfony's Validator Component is designed to validate objects. For this reason the `validator` of this bundle creates  temporary objects from your GraphQL types during the validation process and populates them with the input data. The object properties are created dynamically in runtime with the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` respectively). All newly created objects will be instances of the class `ValidationNode`. See the [ValidationNode API](#validationnode-api) for more details about this class.
+The Symfony Validator Component is designed to validate objects. For this reason the `validator` of this bundle creates  temporary objects from your GraphQL types during the validation process and populates them with the input data. The object properties are created dynamically in runtime with the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` respectively). All newly created objects will be instances of the class `ValidationNode`. See the [ValidationNode API](#validationnode-api) for more details about this class.
 
 Any arguments of the type `input-object` marked for [cascade](#cascade) validation will also be converted to objects of class `ValidationNode` and embedded in the parent object. The resulting object composition will be then recursively validated, starting from the root object down to the children.
 
@@ -145,27 +142,28 @@ Notice, that the `birthday` argument is converted to an object, as it was marked
 
 Here is a complex example to better demonstrate the internal work of the `ArgumentsValidator`:
 ```yaml
+# config\graphql\types\Mutation.yaml
 Mutation:
-	type: object
-	config:
-		fields:
-			registerUser:
-				type: User
-				resolve: "@=mutation('registerUser', [args, validator])"
-				args:
-					username:
-						type: String!
-						validation:
-							- App\Constraint\Latin: ~
-							- Length: { min: 5, max: 16 }
-					password:
-						type: String!
-						validation:
-							- App\Constraint\Latin: ~
-							- IdenticalTo:
-								propertyPath: passwordRepeat
-					passwordRepeat:
-						type: String!
+    type: object
+    config:
+        fields:
+            registerUser:
+                type: User
+                resolve: "@=mutation('registerUser', [args, validator])"
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - App\Constraint\Latin: ~
+                            - Length: { min: 5, max: 16 }
+                    password:
+                        type: String!
+                        validation:
+                            - App\Constraint\Latin: ~
+                            - IdenticalTo:
+                                propertyPath: passwordRepeat
+                    passwordRepeat:
+                        type: String!
                     emails:
                         type: "[String]"
                         validation:
@@ -175,77 +173,76 @@ Mutation:
                                 max: 3
                             - All:
                                 - Email: ~
-					birthday:
-						type: Birthday
-						validation: cascade
-					job:
-						type: Job
-						validation: cascade
-					address:
-						type: Address
-						validation:
-							- Collection:
-								fields:
-									street:
-										- App\Constraint\Latin: ~
-										- Length: { min: 2, max: 64 }
-									city:
-										- App\Constraint\Latin: ~
-										- Length: { min: 2, max: 64 }
-									zip:
-										- Positive: ~
-			registerAdmin:
-				type: User
-				resolve: "@=mutation('registerAdmin', [args, validator])"
-				args:
-					username:
-						type: String!
-						validation:
-							- Length: { min: 8 }
-					password:
-						type: String!
-						validation:
-							- Length: { min: 10 }
-							- IdenticalTo:
-								propertyPath: passwordRepeat
-					passwordRepeat:
-						type: String!
-						
+                    birthday:
+                        type: Birthday
+                        validation: cascade
+                    job:
+                        type: Job
+                        validation: cascade
+                    address:
+                        type: Address
+                        validation:
+                            - Collection:
+                                fields:
+                                    street:
+                                        - App\Constraint\Latin: ~
+                                        - Length: { min: 2, max: 64 }
+                                    city:
+                                        - App\Constraint\Latin: ~
+                                        - Length: { min: 2, max: 64 }
+                                    zip:
+                                        - Positive: ~
+            registerAdmin:
+                type: User
+                resolve: "@=mutation('registerAdmin', [args, validator])"
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - Length: { min: 8 }
+                    password:
+                        type: String!
+                        validation:
+                            - Length: { min: 10 }
+                            - IdenticalTo:
+                                propertyPath: passwordRepeat
+                    passwordRepeat:
+                        type: String!
+                       
 Job:
-	type: input-object
-	config:
-		fields:
-			position:
-				type: String!
-				validation:
-					- Choice: [developer, manager, designer]
-			workPeriod:
-				type: Period
-				validation: cascade
-			address:
-				type: Address
-				validation: cascade
+    type: input-object
+    config:
+        fields:
+            position:
+                type: String!
+                validation:
+                    - Choice: [developer, manager, designer]
+            workPeriod:
+                type: Period
+                validation: cascade
+            address:
+                type: Address
+                validation: cascade
 
 Address:
-	type: input-object
-	config:
-		fields:
-			street:
-				type: String!
-				validation:
-					- App\Constraint\Latin: ~
-					- Length: { min: 2, max: 64 }
-			city:
-				type: String!
-				validation:
-					- App\Constraint\Latin: ~
-					- Length: { min: 2, max: 64 }
-			zip:
-				type: Int!
-				validation:
-					- Positive: ~
-				
-					
+    type: input-object
+    config:
+        fields:
+            street:
+                type: String!
+                validation:
+                    - App\Constraint\Latin: ~
+                    - Length: { min: 2, max: 64 }
+            city:
+                type: String!
+                validation:
+                    - App\Constraint\Latin: ~
+                    - Length: { min: 2, max: 64 }
+            zip:
+                type: Int!
+                validation:
+                    - Positive: ~                
+                    
 Period:
     type: input-object
     config:
@@ -262,21 +259,21 @@ Period:
                           propertyPath: 'startDate'	
 
 Birthday:
-	type: input-object
-	config:
-		fields:
-			day:
-				type: Int!
-				validation:
-					- Range: { min: 1, max: 31 }
-			month:
-				type: Int!
-				validation:
-					- Range: { min: 1, max: 12 }
-			year:
-				type: Int!	
-				validation:
-					- Range: { min: 1900, max: today }					
+    type: input-object
+    config:
+        fields:
+            day:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 31 }
+            month:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 12 }
+            year:
+                type: Int!	
+                validation:
+                    - Range: { min: 1900, max: today }					
 ```
 
 
@@ -307,126 +304,126 @@ In the chapter [Basics](#basics) this method was already demonstrated.
 Property constraints are applied to _arguments_:
 ```yaml
 Mutation:
-	type: object
-	config:
-		fields:
-			updateUser:
-				type: User
-				resolve: "@=mutation('updateUser', [args, validator])"
-				args:
-					username:
-						type: String
-						validation: # using an explicit list of constraints
-							- NotBlank: ~ 
-							- Length:
-								min: 6
-								max: 32
-								minMessage: "Username must have {{ limit }} characters or more"
-								maxMessage: "Username must have {{ limit }} characters or less"
-							
-					email:
-						type: String
-						validation: App\Entity\User::$email # using a link
-					info:
-						type: String
-						validation: # mixing both
-							link: App\Entity\User::$info
-							constraints:
-								- NotBlank: ~
-								- App\Constraint\MyConstraint:  ~ # custom constraint						
+    type: object
+    config:
+        fields:
+            updateUser:
+                type: User
+                resolve: "@=mutation('updateUser', [args, validator])"
+                args:
+                    username:
+                        type: String
+                        validation: # using an explicit list of constraints
+                            - NotBlank: ~ 
+                            - Length:
+                                min: 6
+                                max: 32
+                                minMessage: "Username must have {{ limit }} characters or more"
+                                maxMessage: "Username must have {{ limit }} characters or less"
+                            
+                    email:
+                        type: String
+                        validation: App\Entity\User::$email # using a link
+                    info:
+                        type: String
+                        validation: # mixing both
+                            link: App\Entity\User::$info
+                            constraints:
+                                - NotBlank: ~
+                                - App\Constraint\MyConstraint:  ~ # custom constraint						
 ```
 Class constraints are applied on the _field_ level:
 ```yaml
 Mutation:
-	type: object
-	config:
-		fields:
-			updateUser:
-				type: User
-				resolve: "@=mutation('updateUser', [args, validator])"
-				validation:
-					- Callback: [App\Validation\UserValidator, updateUser]
-				args:
-					username: String						
-					email: String
-					info: String	
+    type: object
+    config:
+        fields:
+            updateUser:
+                type: User
+                resolve: "@=mutation('updateUser', [args, validator])"
+                validation:
+                    - Callback: [App\Validation\UserValidator, updateUser]
+                args:
+                    username: String						
+                    email: String
+                    info: String	
 ```
 It's also possible to declare validation constraint on the _type_ level. This is useful if you don't want to repeat the configuration for each field or if you want to move the entire validation logic into a function:
 ```yaml
 Mutation:
-	type: object
-	config:
-		validation:
-			- Callback: [App\Validation\UserValidator, validate]
-		fields:
-			createUser:
-				type: User
-				resolve: "@=mutation('createUser', [args, validator])"
-				args:
-					username: String						
-					email: String
-					info: String
-			updateUser:
-				type: User
-				resolve: "@=mutation('updateUser', [args, validator])"
-				args:
-					username: String						
-					email: String
-					info: String
-			
+    type: object
+    config:
+        validation:
+            - Callback: [App\Validation\UserValidator, validate]
+        fields:
+            createUser:
+                type: User
+                resolve: "@=mutation('createUser', [args, validator])"
+                args:
+                    username: String						
+                    email: String
+                    info: String
+            updateUser:
+                type: User
+                resolve: "@=mutation('updateUser', [args, validator])"
+                args:
+                    username: String						
+                    email: String
+                    info: String
+            
 ```
 #### input-object:
 
 `input-object` types are designed to be used as arguments in other types. Basically they are composite arguments, so the property constraints are declared for each _field_ unlike `object` types, where the property constraints are declared for each _argument_:
 ```yaml
 User:
-	type: input-object
-	config:
-		fields:
-			username:
-				type: String!
-				validation: # using an explicit list of constraints
-					- NotBlank: ~
-					- Length: { min: 6, max: 32 }
-			password:
-				type: String!
-				validation: App\Entity\User::$password # using a link
-			email:
-				type: String!
-				validation: # mixing both
-					link: App\Entity\User::$email
-					constraints:
-						- Email: ~
+    type: input-object
+    config:
+        fields:
+            username:
+                type: String!
+                validation: # using an explicit list of constraints
+                    - NotBlank: ~
+                    - Length: { min: 6, max: 32 }
+            password:
+                type: String!
+                validation: App\Entity\User::$password # using a link
+            email:
+                type: String!
+                validation: # mixing both
+                    link: App\Entity\User::$email
+                    constraints:
+                        - Email: ~
 ```
 class constraints are declared a level higher, under the `config` key:
 ```yaml
 User:
-	type: input-object
-	config:
-		validation:
-			- Callback: [App\Validation\UserValidator, validate]
-		fields:
-			username:
-				type: String!
-			password:
-				type: String!
-			email:
-				type: String!
+    type: input-object
+    config:
+        validation:
+            - Callback: [App\Validation\UserValidator, validate]
+        fields:
+            username:
+                type: String!
+            password:
+                type: String!
+            email:
+                type: String!
 ```
 ### Linking class constraints
 If you already have classes (e.g. Doctrine entities) with validation constraints applied to them, you can reuse these constraints in your configuration files by linking corresponding _properties_, _getters_ or entire _classes_.
 
 A `link` can have 4 different targets:
     - **property**: `<ClassName>::$<propertyName>`
-	- **getters**:  `<ClassName>::<propertyName>()`
-	- **property and getters**: `<ClassName>::<propertyName>`
-	- **class**: `<ClassName>`
+    - **getters**:  `<ClassName>::<propertyName>()`
+    - **property and getters**: `<ClassName>::<propertyName>`
+    - **class**: `<ClassName>`
 
 for example:
     - **property**: `App\Entity\User::$username` links to a single property `$username` of the class `User`. 
-	- **getters**:  `App\Entity\User::username()` links to `getUsername()`, `isUsername()` and `hasUsername()`.
-	- **property and getters**: `App\Entity\User::username` links to a single property `$username` as well to `getUsername()`, `isUsername()`  and `hasUsername()`
-	- **class**: `App\Entity\User` links to
+    - **getters**:  `App\Entity\User::username()` links to `getUsername()`, `isUsername()` and `hasUsername()`.
+    - **property and getters**: `App\Entity\User::username` links to a single property `$username` as well to `getUsername()`, `isUsername()`  and `hasUsername()`
+    - **class**: `App\Entity\User` links to
 
 > **Note**:
 > If you target only getters, then prefixes must be omitted. For example, if you want to target getters of the class `User` with the names `isChild()` and `hasChildren()`, then the link would be `App\Entity\User::child()`.
@@ -448,73 +445,73 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Post 
 {
-	/**
-	 * @Assert\NotBlank()
-	 */
-	private $title;
-	
-	/**
-	 * @Assert\Length(max=512)
-	 */
-	private $text;
-	
-	/**
-	 * @Assert\Length(min=5, max=10)
-	 */
-	public function getTitle(): string
-	{
-		return $this->title;
-	}
-	
-	/**
-	 * @Assert\EqualTo("Lorem Ipsum")
-	 */
-	public function hasTitle(): bool
-	{
-		return strlen($this->title) !== 0;
-	}
-	
-	/**
-	 * @Assert\Json()
-	 */
-	public function getText(): string
-	{
-		return $this->text;
-	}
+    /**
+     * @Assert\NotBlank()
+     */
+    private $title;
+    
+    /**
+     * @Assert\Length(max=512)
+     */
+    private $text;
+    
+    /**
+     * @Assert\Length(min=5, max=10)
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    
+    /**
+     * @Assert\EqualTo("Lorem Ipsum")
+     */
+    public function hasTitle(): bool
+    {
+        return strlen($this->title) !== 0;
+    }
+    
+    /**
+     * @Assert\Json()
+     */
+    public function getText(): string
+    {
+        return $this->text;
+    }
 }
 ```
 Then you could link class members this way:
 ```yaml
 Mutation:
-	type: object
-		config:
-			fields:
-				editPost:
-					type: Post
-					resolve: "@=mutation('edit_post', [args, validator])"
-					validation:
-						link: App\Entity\Post # targeting the class
-					args:
-						title:
-							type: String!
-							validation:
-								link: App\Entity\Post::title # property and getters
-						text:
-							type: String!
-							validation:
-								link: App\Entity\Post::$text # only property					
+    type: object
+        config:
+            fields:
+                editPost:
+                    type: Post
+                    resolve: "@=mutation('edit_post', [args, validator])"
+                    validation:
+                        link: App\Entity\Post # targeting the class
+                    args:
+                        title:
+                            type: String!
+                            validation:
+                                link: App\Entity\Post::title # property and getters
+                        text:
+                            type: String!
+                            validation:
+                                link: App\Entity\Post::$text # only property					
 ```
 or use the short form (omitting the `link` key), which is equal to the config above:
 ```yaml
  ...
-					validation: App\Entity\Post # targeting the class
-					args:
-						title:
-							type: String!
-							validation: App\Entity\Post::title # property and getters
-						text:
-							type: String!
-							validation: App\Entity\Post::$text # only property
+                    validation: App\Entity\Post # targeting the class
+                    args:
+                        title:
+                            type: String!
+                            validation: App\Entity\Post::title # property and getters
+                        text:
+                            type: String!
+                            validation: App\Entity\Post::$text # only property
  ...
 ```
 The argument `title` will get 3 assertions: `NotBlank()`, `Length(min=5, max=10)` and `EqualTo("Lorem Ipsum")`, whereas the argument `text` will only get `Length(max=512)`. The callback `validate` of the class `PostValidator` will also be called once.
@@ -531,22 +528,22 @@ namespace App\Entity;
  */
 class User 
 {
-	public static function validate() 
-	{
-		// ...
-	}
+    public static function validate() 
+    {
+        // ...
+    }
 }
 ```
 and this config:
 ```yaml
 Mutation:
-	type: object
-	config:
-		fields:
-			createUser:
-				validation: App\Entity\User # linking
-				resolve: "@=res('createUser', [args, validator])"
-				...
+    type: object
+    config:
+        fields:
+            createUser:
+                validation: App\Entity\User # linking
+                resolve: "@=res('createUser', [args, validator])"
+                ...
 ```
 Now when you try to validate the arguments in your resolver it will throw an exception, because it will try to call a method with name `validate` on the object of class `ValidationNode`, which doesn't have such. As explained in the section [How does it work?](#how-does-it-work) each GraphQL type gets _it's own_ object during the validation process.
 
@@ -563,38 +560,38 @@ The validation of arguments of the type `input-object`, which are marked as `cas
 #### Example:
 ```yaml
 Mutation:
-	type: object
-		config:
-			fields:
-				updateUser:
-					type: Post
-					resolve: "@=mutation('update_user', [args, validator])"
-					args:
-						id: 
-							type: ID!
-						address:
-							type: Address
-							validation: cascade
-						workPeriod:
-							type: Period
-							validation: cascade
+    type: object
+        config:
+            fields:
+                updateUser:
+                    type: Post
+                    resolve: "@=mutation('update_user', [args, validator])"
+                    args:
+                        id: 
+                            type: ID!
+                        address:
+                            type: Address
+                            validation: cascade
+                        workPeriod:
+                            type: Period
+                            validation: cascade
 
 Address:
-	type: input-object
-	config:
-		fields:
-			street:
-				type: String!
-				validation:
-					- Length: { min: 5, max: 15 }
-			city:
-				type: String!
-				validation:
-					- Choice: ['Berlin', 'New York', 'Moscow']
-			house:
-				type: Int!
-				validation:
-					- Positive: ~
+    type: input-object
+    config:
+        fields:
+            street:
+                type: String!
+                validation:
+                    - Length: { min: 5, max: 15 }
+            city:
+                type: String!
+                validation:
+                    - Choice: ['Berlin', 'New York', 'Moscow']
+            house:
+                type: Int!
+                validation:
+                    - Positive: ~
 
 Period:
     type: input-object
@@ -654,60 +651,60 @@ Mutation:
                             - All:
                                 - Email: ~
                      birthday:
-	                     type: Birthday
-	                     validation: cascade
-	                     
+                         type: Birthday
+                         validation: cascade
+                         
 Birthday:
-	type: input-object
-	config:
-		fields:
-			day:
-				type: Int!
-				validation:
-					- Range: { min: 1, max: 31 }
-			month:
-				type: Int!
-				validation:
-					- Range: { min: 1, max: 12 }
-			year:
-				type: Int!	
-				validation:
-					- Range: { min: 1900, max: today }
+    type: input-object
+    config:
+        fields:
+            day:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 31 }
+            month:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 12 }
+            year:
+                type: Int!	
+                validation:
+                    - Range: { min: 1900, max: today }
 ```
 The configuration above could be used in a resolver as follows:
 ```php
 public function register(Argument $args, ArgumentsValidator $validator)
 {
-	/* 
-	 * Validates:
-	 *   - username against 'Length'
-	 *   - password againt 'IdenticalTo'
-	 */
-	$validator->validate('registration');
+    /* 
+     * Validates:
+     *   - username against 'Length'
+     *   - password againt 'IdenticalTo'
+     */
+    $validator->validate('registration');
 
-	/* 
-	 * Validates:
-	 *   - password against 'Length'
-	 *   - emails against 'Unique', 'Count' and 'All'
-	 *   - birthday against 'Valid' (cascade).
-	 *       - day against 'Range'
-	 *       - month against 'Range'
-	 *       - year against 'Range'
-	 */ 
-	$validator->validate('Default');
-	// ... which is equal to:
-	$validator->validate(); 
+    /* 
+     * Validates:
+     *   - password against 'Length'
+     *   - emails against 'Unique', 'Count' and 'All'
+     *   - birthday against 'Valid' (cascade).
+     *       - day against 'Range'
+     *       - month against 'Range'
+     *       - year against 'Range'
+     */ 
+    $validator->validate('Default');
+    // ... which is equal to:
+    $validator->validate(); 
 
-	/** 
-	 * Validates only arguments in the 'Birthday' type 
-	 * against constraints with no explicit groups.
-	 */
-	$validator->validate('Birthdate');	
+    /** 
+     * Validates only arguments in the 'Birthday' type 
+     * against constraints with no explicit groups.
+     */
+    $validator->validate('Birthdate');	
 
-	// Validates all arguments in each type against all constraints.
-	$validator->validate(['registration', 'Default']);
-	// ... which is equal to:
-	$validator->validate(['registration', 'Mutation', 'Birthdate']);
+    // Validates all arguments in each type against all constraints.
+    $validator->validate(['registration', 'Default']);
+    // ... which is equal to:
+    $validator->validate(['registration', 'Mutation', 'Birthdate']);
 }
 ```
 > **Note**:
@@ -721,10 +718,10 @@ You can customize the output  by passing `false` as a second argument to the `va
 ```php
 public function resolver(ArgumentsValidator $validator) 
 {
-	$errors = $validator->validate(null, false);
-	
-	// Use $errors to build your own exception
-	...
+    $errors = $validator->validate(null, false);
+    
+    // Use $errors to build your own exception
+    ...
 }
 ```
 See more about [Error handling](https://github.com/overblog/GraphQLBundle/blob/master/docs/error-handling/index.md) here.
@@ -755,10 +752,10 @@ Mutation:
                         type: String!
                         validation:
                             - Length: 
-	                            min: 8
-	                            max: 32
-	                            minMessage: "register.password.length.min"
-	                            maxMessage: "register.password.length.max"
+                                min: 8
+                                max: 32
+                                minMessage: "register.password.length.min"
+                                maxMessage: "register.password.length.max"
                             - IdenticalTo:
                                 propertyPath: passwordRepeat
                                 message: "register.password.identical"
@@ -779,15 +776,15 @@ or use another format, which is more readable:
 ```yaml
 # translations\validators.en.yaml
 register:
-	username:
-		length:
-			min: "The username should have {{ length }} characters or more"
-			max: "The username should have {{ length }} characters or less"
-	password:
-		identical: "The passwords are not equal."
-		length:
-			min: "The password should have {{ length }} characters or more"
-			max: "The password should have {{ length }} characters or less"
+    username:
+        length:
+            min: "The username should have {{ length }} characters or more"
+            max: "The username should have {{ length }} characters or less"
+    password:
+        identical: "The passwords are not equal."
+        length:
+            min: "The password should have {{ length }} characters or more"
+            max: "The password should have {{ length }} characters or less"
 ```
 To translate into other languages just create additional  translation resource with a required suffix, for example `validators.de.yaml` for German and `validators.ru.yaml` for Russian.
 
@@ -814,10 +811,10 @@ This will rewrite the default service definition and make possible to use all fu
 ```yaml
 ...
 args:
-	username:
-		type: String!
-		validation:
-			- Expression: "service('my_service').validate(value)"
+    username:
+        type: String!
+        validation:
+            - Expression: "service('my_service').validate(value)"
 ```
 > **Note**
 > Expressions in the `Expression` constraint shouldn't be prefixed with the `@=`.
@@ -851,16 +848,16 @@ Traverses up through parent nodes and returns first object with matching name.
 In this example we are checking if the value of the `shownEmail` is in the `emails` array. We are using the `getParent()` method to access the field of the type `Mutation` from the type `Profile`:
 ```yaml
 Mutation:
-	type: object
-	config:
-		fields:
-			registerUser:
-				type: User
-				resolve: "@=resolver('register_user', [args, validator])"
-				args:
-					username: String!
-					password: String!
-					passwordRepeat: String!
+    type: object
+    config:
+        fields:
+            registerUser:
+                type: User
+                resolve: "@=resolver('register_user', [args, validator])"
+                args:
+                    username: String!
+                    password: String!
+                    passwordRepeat: String!
                     emails:
                         type: "[String]"
                         validation:
@@ -870,10 +867,10 @@ Mutation:
                                 max: 5
                             - All:
                                 - Email: ~
-					profile:
-						type: Profile
-						validation: cascade
-					
+                    profile:
+                        type: Profile
+                        validation: cascade
+                    
 Profile:
     type: input-object
     config:
@@ -893,23 +890,23 @@ Mutation:
     config:
         validation:
             - Callback: [App\Validation\Validator, validate]
-		fields:
-			createUser:
-				type: User
-				resolve: "@=resolver('createUser', [args, validator])"
-				args:
-					username: String!
-					password: String!
-					passwordRepeat: String!
-					email: String!
-			createAdmin:
-				type: User
-				resolve: "@=resolver('createAdmin', [args, validator])"
-				args:
-					username: String!
-					password: String!
-					passwordRepeat: String!
-					email: String!
+        fields:
+            createUser:
+                type: User
+                resolve: "@=resolver('createUser', [args, validator])"
+                args:
+                    username: String!
+                    password: String!
+                    passwordRepeat: String!
+                    email: String!
+            createAdmin:
+                type: User
+                resolve: "@=resolver('createAdmin', [args, validator])"
+                args:
+                    username: String!
+                    password: String!
+                    passwordRepeat: String!
+                    email: String!
 ```
 
 To find out which of 2 fields is being validated inside the method, we can use `getFieldName`:
@@ -920,19 +917,19 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 
 // ...
 
-	public static function validate(ValidationNode $object, ExecutionContextInterface $context, $payload): void  
-	{  
-		switch ($object->getFieldName()) {  
-			case 'createUser':  
-				// Validation logic for users  
-				break;  
-			case 'createAdmin':  
-				// Validation logic for admins  
-				break;  
-			default:  
-				// Validation logic for all other fields  
-		}  
-	}
+    public static function validate(ValidationNode $object, ExecutionContextInterface $context, $payload): void  
+    {  
+        switch ($object->getFieldName()) {  
+            case 'createUser':  
+                // Validation logic for users  
+                break;  
+            case 'createAdmin':  
+                // Validation logic for admins  
+                break;  
+            default:  
+                // Validation logic for all other fields  
+        }  
+    }
 
 // ...
 ```
