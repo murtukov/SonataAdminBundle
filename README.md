@@ -137,7 +137,8 @@ Any arguments of the type `input-object` marked for [cascade](#cascade) validati
 
 Let's take the example from the chapter [Overview](#overview). When you call `$validator->validate()` in the `register` resolver, the following objects will be created:
 
-![enter image description here](https://pp.userapi.com/c857732/v857732014/deab/c3u-KG7tuiI.jpg =700x)
+<img src="https://pp.userapi.com/c857732/v857732014/deab/c3u-KG7tuiI.jpg" width="700" />
+
 Notice, that the `birthday` argument is converted to an object, as it was marked for cascade validation.
 
 Here is a complex example to better demonstrate the internal work of the `ArgumentsValidator`:
@@ -286,7 +287,8 @@ for the `registerUser` resolver:
 > Note that the argument `address` in the object `Mutation` wasn't converted to an object of class `ValidationNode`, as it wasn't marked as `cascade`, but it will still be validated against the `Collection` constraint.
 
 for the `registerAdmin` resolver:
-![enter image description here](https://pp.userapi.com/c850528/v850528014/1641e5/bH_e9tKegD4.jpg =290x)
+
+<img src="https://pp.userapi.com/c850528/v850528014/1641e5/bH_e9tKegD4.jpg" width="290" />
 
 ## Applying validation constraints
 
