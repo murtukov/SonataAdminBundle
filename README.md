@@ -52,6 +52,7 @@ Examples:
 # If using single quotes, you must use 4 slashes
 @=ser('App\\\\Manager\\\\UserManager').someMethod()
 ```
+---
 
 ### parameter
 **Signature**: <code><b>parameter</b>(string <b>$name</b>): mixed</code> | **Alias**: `param`
@@ -65,7 +66,7 @@ Examples:
 # Using the 'param' alias
 @=param('mailer.transport')
 ```
-  
+---  
 ### isTypeOf
 **Signature**: <code><b>isTypeOf</b>(string <b>$className</b>): boolean</code>
 
@@ -75,7 +76,7 @@ Example:
 ```yaml
 @=isTypeOf("App\\User\\User")
 ```
-
+---
 ### resolver
 **Signature**: <code><b>resolver</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code> | **Alias**: `res`
 
@@ -93,7 +94,7 @@ Examples:
 # If using single quotes, you must use 4 slashes
 @=res('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', [args, info, context, value])
 ```
-
+---
 ### mutation
 **Signature**: <code><b>mutation</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code> | **Alias**: `mut`
 
@@ -111,7 +112,7 @@ Examples:
 # If using single quotes, you must use 4 slashes
 @=mut('App\\\\GraphQL\\\\Mutation\\\\PostMutation::findAll', [args])
 ```
-
+---
 ### arguments
 **Signature**: <code><b>arguments</b>(array <b>$mapping</b>, mixed <b> $data</b>): mixed</code>
 
@@ -121,7 +122,7 @@ Example:
 ```yaml
 @=arguments(['input' => 'MyInput'], ['input' => ['field1' => 'value1']])
 ```
-
+---
 ### globalId
 **Signature**: <code><b>globalId</b>(string|int <b>$id</b>, string <b> $typeName</b> = null): string</code>
 
@@ -131,7 +132,7 @@ Example:
 ```yaml
 @=globalId(15, 'User')
 ```
-
+---
 ### fromGlobalId
 **Signature**: <code><b>fromGlobalId</b>(string <b>$globalId</b>): array</code>
 
@@ -141,7 +142,7 @@ Example:
 ```yaml
 @=fromGlobalId(‘QmxvZzox’)
 ```
-
+---
 ### newObject
 **Signature**:  <code><b>newObject</b>(string <b>$className</b>, array <b> $args</b> = []): object</code>
 
@@ -158,7 +159,7 @@ Examples:
 # Using inside another function (resolver)
 @=resolver("myResolver", [newObject("App\\User\\User", [args])])
 ```
-
+---
 ### call
 **Signature**: <code><b>call</b>(callable <b> $target</b>, array <b> $args</b> = []): mixed</code>
 
@@ -175,7 +176,7 @@ call(["App\\Util\\Validator", "email"], [args["email"]])
 # Calling a function
 @=call('array_merge', [args['array1'], args['array2']])
 ```
-
+---
 ### hasRole
 **Signature**: <code><b>hasRole</b>(string <b>$role</b>): bool</code>
 
@@ -185,7 +186,7 @@ Example:
 ```yaml
 @=hasRole('ROLE_API')
 ```
-
+---
 ### hasAnyRole
 **Signature**: <code><b>hasAnyRole</b>(string <b> $role1</b>, string <b> $role2</b>, .\.\.string <b> $roleN</b>): bool</code>
 
@@ -195,7 +196,7 @@ Example:
 ```yaml
 @=hasAnyRole('ROLE_API', 'ROLE_ADMIN')
 ```
-
+---
 ### isAnonymous  
 **Signature**: <code><b>isAnonymous</b>(): bool</code>
 
@@ -209,7 +210,7 @@ Example:
 ```yaml
 @=isAnonymous()
 ```
-
+---
 ### isRememberMe
 **Signature**: <code><b>isRememberMe</b>(): bool</code>
 
@@ -222,7 +223,7 @@ Example:
 ```yaml
 @=isRememberMe()
 ```
-
+---
 ### isFullyAuthenticated
 **Signature**: <code><b>isFullyAuthenticated</b>(): bool</code>
 
@@ -235,7 +236,7 @@ Example:
 ```yaml
 @=isFullyAuthenticated()
 ```
-
+---
 ### isAuthenticated()  
 **Signature**: <code><b>isAuthenticated</b>(): bool</code>
 
@@ -248,7 +249,7 @@ Example:
 ```yaml
 @=isAuthenticated()
 ```
-
+---
 ### hasPermission
 **Signature**: <code><b>hasPermission</b>(object<b> $object</b>, string <b> $permission</b>): bool</code>
 
@@ -259,7 +260,7 @@ Example:
 # Using in combination with the 'service' function.
 @=hasPermission(ser('user_repository').find(1), ‘OWNER’)
 ```
-
+---
 ### hasAnyPermission
 **Signature**: <code><b>hasAnyPermission</b>(object<b> $object</b>, array<b> $permission</b>): bool</code>
 
@@ -270,7 +271,7 @@ Example:
 # Using in combination with the 'service' function
 @=hasAnyPermission(service('my_service').getObject(), [‘OWNER’, ‘ADMIN’])
 ```
-
+---
 ### getUser 
 **Signature**: <code><b>getUser</b>(): Symfony\Component\Security\Core\User\UserInterface|null</code>
 
